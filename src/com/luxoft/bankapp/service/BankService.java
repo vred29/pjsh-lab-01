@@ -20,10 +20,6 @@ public interface BankService
 
     Client getClient(Bank bank, String clientName) throws ClientNotFoundException;
 
-    void saveClient(Client client);
-
-    Client loadClient(String path);
-
     void populateBankData(Bank bank);
 
 }

@@ -6,13 +6,15 @@ import java.util.Map;
 
 public interface Account
 {
-    String getAccountName();
+    long getId();
 
-    float getBalance();
+    AccountType getType();
 
-    void deposit(float x) throws IllegalArgumentException;
+    double getBalance();
 
-    void withdraw(float x) throws NotEnoughFundsException;
+    void deposit(double amount);
+
+    void withdraw(double amount) throws NotEnoughFundsException;
 
     void parseFeed(Map<String, String> map);
 }

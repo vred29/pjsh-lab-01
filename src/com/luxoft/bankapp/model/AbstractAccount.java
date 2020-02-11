@@ -7,27 +7,25 @@ import java.util.Map;
 
 public abstract class AbstractAccount implements Account, Serializable
 {
-    protected float balance;
+    private long id;
+    private double balance;
 
-    @Override
-    public void deposit(float x) throws IllegalArgumentException
+    final AccountType type;
+
+    public AbstractAccount(AccountType type)
     {
-        if (x >= 0)
-        {
-            balance += x;
-            System.out.println("Successful deposit operation");
-        }
-        else
-        {
-            throw new IllegalArgumentException();
-        }
+        this.type = type;
     }
 
     @Override
-    @Feed("BALANCE")
-    public float getBalance()
+    public void deposit(double amount)
     {
-        return balance;
+        if (amount < 0)
+        {
+            return;
+        }
+
+        balance += amount;
     }
 
     @Override
@@ -44,19 +42,8 @@ public abstract class AbstractAccount implements Account, Serializable
 
         AbstractAccount that = (AbstractAccount) o;
 
-        return Float.compare(that.balance, balance) == 0;
+        return Double.compare(that.balance, balance) == 0;
 
-    }
-
-    public int decimalValue()
-    {
-        return Math.round(getBalance());
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return (balance != +0.0f ? Float.floatToIntBits(balance) : 0);
     }
 
     @Override
@@ -65,22 +52,55 @@ public abstract class AbstractAccount implements Account, Serializable
         StringBuilder builder = new StringBuilder();
         builder
                 .append("\n")
-                .append(getAccountName())
+                .append(getType())
                 .append("\n\tbalance = ")
-                .append(decimalValue());
+                .append(balance);
         return builder.toString();
     }
 
+    @Override
+    public AccountType getType()
+    {
+        return type;
+    }
+
+    @Override
+    @Feed("BALANCE")
+    public double getBalance()
+    {
+        return balance;
+    }
+
+    void setBalance(double balance)
+    {
+        this.balance = balance;
+    }
+
+    @Override
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
+
+
+    // TODO feed
     public void parseFeed(Map<String, String> map)
     {
         try
         {
             String balance = map.get("balance");
-            this.balance = Float.parseFloat(balance != null ? balance : "");
+            this.balance = Double.parseDouble(balance != null ? balance : "");
         }
         catch (NumberFormatException ignore)
         {
 
         }
     }
+
+
 }

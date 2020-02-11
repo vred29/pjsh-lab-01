@@ -5,50 +5,55 @@ import com.luxoft.bankapp.service.feed.Feed;
 
 import java.util.Map;
 
-public class CheckingAccount extends AbstractAccount {
-	@Feed
-	private float overdraft;
+public class CheckingAccount extends AbstractAccount
+{
+    @Feed
+    private double overdraft = 0;
 
-	public CheckingAccount(float overdraft) throws IllegalArgumentException {
-		if (overdraft >= 0) {
-			this.overdraft = overdraft;
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
+    public CheckingAccount(double overdraft)
+    {
+        super(AccountType.CHECKING);
 
-	public void setOverdraft(float x) throws IllegalArgumentException {
-		if (x >= 0) {
-			overdraft = x;
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
+        setOverdraft(overdraft);
+    }
 
-	@Override
-	public void withdraw(float x) throws OverDraftLimitExceededException {
-		if (balance + overdraft >= x) {
-			balance -= x;
-			System.out.println("Successful withdrawal from checking account");
-		} else {
-			throw new OverDraftLimitExceededException(getAccountName(), balance
-					+ overdraft);
-		}
-	}
+    public void setOverdraft(double amount)
+    {
+        if (overdraft < 0)
+        {
+            return;
+        }
 
-	@Override
-	public void parseFeed(Map<String, String> map){
-		super.parseFeed(map);
-		try {
-			String overdraft = map.get("overdraft");
-			this.overdraft = Float.parseFloat(overdraft != null ? overdraft : "");
-		} catch (NumberFormatException ignore) {
+        overdraft = amount;
+    }
 
-		}
-	}
+    @Override
+    public void withdraw(double amount) throws OverDraftLimitExceededException
+    {
+        if (getBalance() + overdraft < amount)
+        {
+            throw new OverDraftLimitExceededException(
+                    getType().toString(), getBalance() + overdraft);
+        }
 
-	public String getAccountName() {
-		return "Checking Account";
-	}
+        setBalance(getBalance() - amount);
 
+        System.out.println("Successful withdrawal from checking account");
+    }
+
+    // TODO feed
+    @Override
+    public void parseFeed(Map<String, String> map)
+    {
+        super.parseFeed(map);
+        try
+        {
+            String overdraft = map.get("overdraft");
+            this.overdraft = Float.parseFloat(overdraft != null ? overdraft : "");
+        }
+        catch (NumberFormatException ignore)
+        {
+
+        }
+    }
 }

@@ -7,37 +7,28 @@ import java.util.Map;
 public class SavingAccount extends AbstractAccount
 {
 
-    public SavingAccount(float initialBalance) throws IllegalArgumentException
+    public SavingAccount(float initialBalance)
     {
+        super(AccountType.SAVING);
+
         if (initialBalance >= 0)
         {
-            balance = initialBalance;
-        }
-        else
-        {
-            throw new IllegalArgumentException();
+            setBalance(initialBalance);
         }
     }
 
     @Override
-    public void withdraw(float x) throws NotEnoughFundsException
+    public void withdraw(double amount)
     {
-        if (balance >= x)
+        if (getBalance() < amount)
         {
-            balance -= x;
-            System.out.println("Successful withdrawal from Saving account");
+            throw new NotEnoughFundsException(amount);
         }
-        else
-        {
-            throw new NotEnoughFundsException(x);
-        }
+
+        System.out.println("Successful withdrawal from Saving account");
     }
 
-    public String getAccountName()
-    {
-        return "Saving Account";
-    }
-
+    // TODO feed
     @Override
     public void parseFeed(Map<String, String> map)
     {

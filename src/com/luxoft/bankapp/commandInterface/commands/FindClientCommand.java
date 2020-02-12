@@ -18,11 +18,11 @@ public class FindClientCommand extends AbstractCommand {
         Scanner s = new Scanner(System.in);
         String clientName = s.nextLine();
 
-        try {
-            BankCommander.currentClient = BankCommander.bankService.getClient(BankCommander.currentBank, clientName);
-            System.out.println("Client was set successfully");
-        } catch (ClientNotFoundException e) {
-            System.out.println("Client wasn't found");
-        }
+//        try {
+//            BankCommander.currentClient = BankCommander.bankService.getClient(BankCommander.currentBank, clientName);
+//            System.out.println("Client was set successfully");
+//        } catch (ClientNotFoundException e) {
+//            System.out.println("Client wasn't found");
+//        }
     }
 }

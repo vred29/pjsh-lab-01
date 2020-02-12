@@ -15,6 +15,6 @@ public class BankFeedCommand extends AbstractCommand {
         System.out.println("Enter folder");
         Scanner s = new Scanner(System.in);
         String folder = s.nextLine();
-        BankCommander.bankFeedService.loadFeed(folder);
+//        BankCommander.bankFeedService.loadFeed(folder);
     }
 }

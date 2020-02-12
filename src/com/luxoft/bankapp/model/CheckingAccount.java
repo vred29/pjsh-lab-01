@@ -38,7 +38,7 @@ public class CheckingAccount extends AbstractAccount
 
         setBalance(getBalance() - amount);
 
-        System.out.println("Successful withdrawal from checking account");
+        System.out.println("Successful withdrawal from " + type + " account." );
     }
 
     // TODO feed
@@ -46,14 +46,8 @@ public class CheckingAccount extends AbstractAccount
     public void parseFeed(Map<String, String> map)
     {
         super.parseFeed(map);
-        try
-        {
-            String overdraft = map.get("overdraft");
-            this.overdraft = Float.parseFloat(overdraft != null ? overdraft : "");
-        }
-        catch (NumberFormatException ignore)
-        {
 
-        }
+        String overdraft = map.get("overdraft");
+        this.overdraft = Double.parseDouble(overdraft != null ? overdraft : "");
     }
 }

@@ -16,10 +16,10 @@ public class SaveFeedCommand extends AbstractCommand {
         System.out.println("Enter file name to save");
         Scanner s = new Scanner(System.in);
         String fileName = s.nextLine();
-        try {
-            BankCommander.bankFeedService.saveFeed(fileName);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            BankCommander.bankFeedService.saveFeed(fileName);
+//        } catch (IllegalAccessException | InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
     }
 }

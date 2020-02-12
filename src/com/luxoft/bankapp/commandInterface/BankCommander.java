@@ -5,14 +5,13 @@ import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.feed.BankFeedService;
 import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
-import com.luxoft.bankapp.service.BankServiceImpl;
 
 import java.util.*;
 
 public class BankCommander {
-    public static BankServiceImpl bankService = new BankServiceImpl();
-    public static BankFeedService bankFeedService = new BankFeedServiceImpl();
-    public static BankingImpl currentBank = new BankingImpl("MyBank");
+//    public static BankServiceImpl bankService = new BankServiceImpl();
+//    public static BankFeedService bankFeedService = new BankFeedServiceImpl();
+//    public static BankingImpl currentBank = new BankingImpl("MyBank");
     public static Client currentClient;
     public static Map<String, Command> commands = new TreeMap<>();
 
@@ -30,7 +29,7 @@ public class BankCommander {
         registerCommand(new SaveFeedCommand(i++));
         registerCommand(new ExitCommand(i));
 
-        bankService.populateBankData(currentBank);
+//        bankService.populateBankData(currentBank);
     }
 
     private static void registerCommand(Command command) {

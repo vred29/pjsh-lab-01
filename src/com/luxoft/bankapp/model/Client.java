@@ -1,15 +1,13 @@
 package com.luxoft.bankapp.model;
 
-import com.luxoft.bankapp.exceptions.AccountNotFoundException;
 import com.luxoft.bankapp.exceptions.AccountNumberLimitException;
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
-import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 import com.luxoft.bankapp.service.feed.Feed;
+import com.luxoft.bankapp.service.storage.Storage;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -33,6 +31,8 @@ public class Client implements Identifiable, Serializable
     @Feed("CITY")
     private String city;
 
+    private Storage<Client> storage;
+
     public Client(String name)
     {
         this(name, Gender.UNDEFINED);
@@ -44,31 +44,41 @@ public class Client implements Identifiable, Serializable
         this.gender = gender;
     }
 
-    public synchronized double getBalance() throws ActiveAccountNotSet
+    public synchronized double getBalance()
     {
         if (!checkIfActiveAccountSet())
         {
-            throw new ActiveAccountNotSet();
+            throw new ActiveAccountNotSet(name);
         }
+
         return activeAccount.getBalance();
     }
 
-    public synchronized void deposit(float x) throws IllegalArgumentException, ActiveAccountNotSet
+    public synchronized void deposit(double amount)
     {
         if (!checkIfActiveAccountSet())
         {
-            throw new ActiveAccountNotSet();
+            throw new ActiveAccountNotSet(name);
         }
-        activeAccount.deposit(x);
+
+        activeAccount.deposit(amount);
+        storage.update(this);
     }
 
-    public synchronized void withdraw(float x) throws NotEnoughFundsException, ActiveAccountNotSet
+    public synchronized void withdraw(double amount)
     {
         if (!checkIfActiveAccountSet())
         {
-            throw new ActiveAccountNotSet();
+            throw new ActiveAccountNotSet(name);
         }
-        activeAccount.withdraw(x);
+
+        activeAccount.withdraw(amount);
+        storage.update(this);
+    }
+
+    private boolean checkIfActiveAccountSet()
+    {
+        return activeAccount != null;
     }
 
     public void removeAccount(AccountType type)
@@ -84,17 +94,7 @@ public class Client implements Identifiable, Serializable
         return Collections.unmodifiableSet(accounts);
     }
 
-    public Account getAccount(String type)
-    {
-        Account account = getAccountSafe(type);
-        if (account == null)
-        {
-            throw new AccountNotFoundException();
-        }
-        return account;
-    }
-
-    public Account getAccountSafe(String type)
+    public Account getAccount(AccountType type)
     {
         for (Account account : accounts)
         {
@@ -123,22 +123,14 @@ public class Client implements Identifiable, Serializable
         if (activeAccount == null && accounts != null && !accounts.isEmpty())
         {
             activeAccount = accounts.iterator().next();
+            System.out.println("Default account set for " + name);
         }
     }
 
     public void parseFeed(Map<String, String> map)
     {
-        this.city = map.get("city");
-        this.gender = parseGender(map.get("gender"));
-        Account account = getAccountSafe(map.get("accountType"));
-        if (account == null)
-        {
-            Account created = createAccount(map.get("accountType"));
-            addAccount(created);
-
-            account = created;
-        }
-        account.parseFeed(map);
+        this.city = map.get("CITY");
+        this.gender = Client.Gender.valueOf(map.get("GENDER"));
     }
 
     @Override
@@ -162,24 +154,34 @@ public class Client implements Identifiable, Serializable
         return Objects.hash(id);
     }
 
+    private StringBuilder getSimpleInfoBuilder()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("\nClient: ")
+                .append(name)
+                .append("\nGender: ")
+                .append(getGender());
+
+        return builder;
+    }
+
     @Override
     public String toString()
     {
         StringBuilder builder = getSimpleInfoBuilder();
+
         builder.append("\nAccounts:");
+
         for (Account account : accounts)
         {
             builder.append(account.toString());
         }
+
         builder.append("\nActive account: ");
-        if (checkIfActiveAccountSet())
-        {
-            builder.append(activeAccount.getType());
-        }
-        else
-        {
-            builder.append("not set");
-        }
+
+        builder.append(checkIfActiveAccountSet() ? activeAccount.getType() : "not set");
+
         return builder.toString();
     }
 
@@ -189,7 +191,7 @@ public class Client implements Identifiable, Serializable
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(long id)
     {
         this.id = id;
     }
@@ -249,5 +251,10 @@ public class Client implements Identifiable, Serializable
         {
             this.prefix = prefix;
         }
+    }
+
+    public void setStorage(Storage<Client> storage)
+    {
+        this.storage = storage;
     }
 }

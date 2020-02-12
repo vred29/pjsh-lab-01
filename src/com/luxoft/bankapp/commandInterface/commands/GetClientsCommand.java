@@ -11,8 +11,8 @@ public class GetClientsCommand extends AbstractCommand {
     @Override
     public void execute() {
         System.out.println("Clients:");
-        BankCommander.currentBank.getClients().forEach(v -> {
-            System.out.println(v.getSimpleNameInfo());
-        });
+//        BankCommander.currentBank.getClients().forEach(v -> {
+//            System.out.println(v.getSimpleNameInfo());
+//        });
     }
 }

@@ -2,9 +2,8 @@ package com.luxoft.bankapp.service;
 
 import com.luxoft.bankapp.exceptions.AccountNotFoundException;
 import com.luxoft.bankapp.exceptions.ClientNotFoundException;
-import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.AccountType;
-import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
+import com.luxoft.bankapp.model.*;
 import com.luxoft.bankapp.service.storage.Storage;
 
 import java.util.HashSet;
@@ -16,9 +15,12 @@ public class BankingImpl implements Banking
     private Storage<Client> storage;
 
     @Override
-    public void addClient(Client c)
+    public Client addClient(Client c)
     {
-        storage.add(c);
+        Client created = storage.add(c);
+        c.setStorage(storage);
+
+        return created;
     }
 
     @Override
@@ -50,13 +52,27 @@ public class BankingImpl implements Banking
     }
 
     @Override
-    public void addAccount(Client c, Account account)
+    public Account createAccount(Client c, AccountType type)
     {
+        Account account = null;
+
         if (c.getId() != null)
         {
-            storage.get(c.getId()).addAccount(account);
+            account = new SavingAccount(0);
+
+            if (type == AccountType.CHECKING)
+            {
+                account = new CheckingAccount(0);
+            }
+
+            Client client = storage.get(c.getId());
+
+            client.addAccount(account);
+
             storage.update(c);
         }
+
+        return account;
     }
 
     @Override
@@ -101,6 +117,12 @@ public class BankingImpl implements Banking
     }
 
     @Override
+    public Set<Account> getAllAccounts(Client c)
+    {
+        return storage.get(c.getId()).getAccounts();
+    }
+
+    @Override
     public void removeAccount(Client c, AccountType type)
     {
         if (c.getId() != null)
@@ -111,26 +133,44 @@ public class BankingImpl implements Banking
         }
     }
 
+    @Override
+    public void transferMoney(Client from, Client to, double amount)
+    {
+        from.withdraw(amount);
+        to.deposit(amount);
+    }
+
+    @Override
+    public void setStorage(Storage<Client> storage)
+    {
+        this.storage = storage;
+    }
+
     // TODO feed
     public void parseFeed(Map<String, String> map)
     {
-//        String name = map.get("name");
-//        Client client = getClientsIndex().get(name);
-//        Client.Gender gender = Client.parseGender(map.get("gender"));
-//        if (client == null)
-//        {
-//            try
-//            {
-//                addClient(new Client(name, gender));
-//                client = getClientsIndex().get(name);
-//            }
-//            catch (ClientExistsException ignore)
-//            {
-//                System.err.println("Persistence in bank index corrupted!");
-//
-//            }
-//        }
-//        client.parseFeed(map);
+        String name = map.get("NAME");
+
+        Client client = storage.getBy(name);
+
+        if (client == null)
+        {
+            client = addClient(new Client(name));
+        }
+
+        client.parseFeed(map);
+
+        AccountType type = AccountType.valueOf(map.get("type"));
+        Account account = client.getAccount(type);
+
+        if (account == null)
+        {
+            account = createAccount(client, type);
+        }
+
+        account.parseFeed(map);
+
+        updateAccount(client, account);
     }
 
 }

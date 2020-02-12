@@ -1,8 +1,12 @@
 package com.luxoft.bankapp.service.feed;
 
-import com.luxoft.bankapp.commandInterface.BankCommander;
+import com.luxoft.bankapp.exceptions.ClientNotFoundException;
 import com.luxoft.bankapp.model.Account;
+import com.luxoft.bankapp.model.AccountType;
+import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.service.Banking;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +18,13 @@ import java.util.Map;
 
 public class BankFeedServiceImpl implements BankFeedService
 {
+    private Banking banking;
+
+    public BankFeedServiceImpl(Banking banking)
+    {
+        this.banking = banking;
+    }
+
     @Override
     public void loadFeed(String folder)
     {
@@ -28,12 +39,12 @@ public class BankFeedServiceImpl implements BankFeedService
     @Override
     public void loadFeed(File file)
     {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file)))
+        try (BufferedReader reader = new BufferedReader(new FileReader("feeds/" + file.getName())))
         {
             while (reader.ready())
             {
                 Map<String, String> map = parseLine(reader.readLine());
-                BankCommander.currentBank.parseFeed(map);
+                banking.parseFeed(map);
             }
         }
         catch (IOException e)
@@ -62,9 +73,8 @@ public class BankFeedServiceImpl implements BankFeedService
     {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("feeds/" + file)))
         {
-            for (Client client : BankCommander.currentBank.getClients())
+            for (Client client : banking.getClients())
             {
-
                 String clientInfo = collectFeedInfo(client, client.getClass()).delete(0, 1).toString();
 
                 for (Account account : client.getAccounts())
@@ -152,4 +162,8 @@ public class BankFeedServiceImpl implements BankFeedService
         return builder;
     }
 
+    public void setBanking(Banking banking)
+    {
+        this.banking = banking;
+    }
 }

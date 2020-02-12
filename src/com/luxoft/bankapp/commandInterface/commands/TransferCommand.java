@@ -22,25 +22,25 @@ public class TransferCommand extends AbstractCommand {
         String clientName = s.nextLine();
         Client client;
         Float money;
-        try {
-            client = BankCommander.bankService.getClient(BankCommander.currentBank, clientName);
-            while (true) {
-                try {
-                    System.out.println("How much money do you want to transfer?");
-                    money = Float.parseFloat(s.nextLine());
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid number, try again");
-                }
-            }
-            BankCommander.currentClient.withdraw(money);
-            client.deposit(money);
-        } catch (ClientNotFoundException e) {
-            System.out.println("Client wasn't found");
-        } catch (NotEnoughFundsException e) {
-            System.out.println("Not enought money");
-        } catch (ActiveAccountNotSet activeAccountNotSet) {
-            System.out.println("Active account not set");
-        }
+//        try {
+//            client = BankCommander.bankService.getClient(BankCommander.currentBank, clientName);
+//            while (true) {
+//                try {
+//                    System.out.println("How much money do you want to transfer?");
+//                    money = Float.parseFloat(s.nextLine());
+//                    break;
+//                } catch (NumberFormatException e) {
+//                    System.out.println("Invalid number, try again");
+//                }
+//            }
+//            BankCommander.currentClient.withdraw(money);
+//            client.deposit(money);
+//        } catch (ClientNotFoundException e) {
+//            System.out.println("Client wasn't found");
+//        } catch (NotEnoughFundsException e) {
+//            System.out.println("Not enought money");
+//        } catch (ActiveAccountNotSet activeAccountNotSet) {
+//            System.out.println("Active account not set");
+//        }
     }
 }

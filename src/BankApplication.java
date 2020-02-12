@@ -1,214 +1,175 @@
 import com.luxoft.bankapp.exceptions.*;
-import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.SavingAccount;
+import com.luxoft.bankapp.model.*;
+import com.luxoft.bankapp.service.BankReportService;
+import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
 import com.luxoft.bankapp.service.BankingImpl;
-import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.model.Client.Gender;
+import com.luxoft.bankapp.service.feed.BankFeedService;
+import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
 import com.luxoft.bankapp.service.storage.ClientStorage;
-import com.luxoft.bankapp.service.storage.MapStorage;
+import com.luxoft.bankapp.service.storage.Storage;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.StringReader;
 
 public class BankApplication
 {
+    private static final String[] CLIENT_NAMES =
+            { "Jonny Bravo", "Adam Budzinski", "Anna Smith" };
+
     public static void main(String[] args)
     {
-        Banking banking = initialize();
+        Storage<Client> storage = new ClientStorage();
+        Banking banking = initialize(storage);
 
-        modifyBank(client, 0, 500);
-        modifyBank(adam, 20, 0);
-        System.out.println(adam);
+//        workWithExistingClients(banking);
+//
+//        bankingServiceDemo(banking);
+//
+//        bankReportsDemo(storage);
 
-        // Initialization using BankService implementation
+        bankFeedDemo(banking);
+    }
 
-        BankServiceImpl bankService = new BankServiceImpl();
-        BankingImpl ubs = new BankingImpl();
+    private static void bankFeedDemo(Banking banking)
+    {
+        System.out.println("\n=== Using BankFeedService ===\n");
 
-        Client client1 = new Client("Anna Smith", Gender.FEMALE);
-        client1.setInitialBalance(1000);
-        Account account1 = bankService.createAccount(client1, "Saving");
-        bankService.setActiveAccount(client1, account1);
+        String fileName = "test.feed";
+
+        BankFeedService feedService = new BankFeedServiceImpl(banking);
+
+        feedService.saveFeed(fileName);
+
+        System.out.println("Stored Clients");
+        System.out.println("==============");
+        try (BufferedReader reader = new BufferedReader(new FileReader("feeds/" + fileName)))
+        {
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                System.out.println(line);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("\nLoading clients from file.");
+        System.out.println("==========================");
+
+        banking = new BankingImpl();
+
+        Storage<Client> newStorage = new ClientStorage();
+        banking.setStorage(newStorage);
+
+        feedService = new BankFeedServiceImpl(banking);
+
+        feedService.loadFeed(new File(fileName));
+
+        banking.getClients().forEach(System.out::println);
+    }
+
+    private static void bankReportsDemo(Storage<Client> storage)
+    {
+        System.out.println("\n=== Using BankReportService ===\n");
+
+        BankReportService reportService = new BankReportServiceImpl();
+        reportService.setStorage(storage);
+
+        System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
+
+
+        System.out.println("Number of accounts: " + reportService.getAccountsNumber());
+
+
+        System.out.println("Bank Credit Sum: " + reportService.getBankCreditSum());
+    }
+
+    private static void bankingServiceDemo(Banking banking)
+    {
+        System.out.println("\n=== Initialization using Banking implementation ===\n");
+
+        Client anna = new Client(CLIENT_NAMES[2], Gender.FEMALE);
+        anna = banking.addClient(anna);
+
+        Account saving = banking.createAccount(anna, AccountType.SAVING);
+        saving.deposit(1000);
+
+        banking.updateAccount(anna, saving);
+
+        Account checking = banking.createAccount(anna, AccountType.CHECKING);
+        checking.deposit(3000);
+
+        banking.updateAccount(anna, checking);
+
+        banking.getAllAccounts(anna).stream().forEach(System.out::println);
+    }
+
+    private static void workWithExistingClients(Banking banking)
+    {
+        System.out.println("\n=======================================");
+        System.out.println("\n===== Work with existing clients ======");
+
+        Client jonny = banking.getClient(CLIENT_NAMES[0]);
         try
         {
-            bankService.deposit(client1, 400);
+            jonny.deposit(5_000);
         }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-
-        /*
-         * Information in catch clauses are just for test purposes
-         */
-        try
-        {
-            bankService.withdraw(client1, 50);
-        }
-        catch (NotEnoughFundsException e)
-        {
-            System.out.println("Not enough funds");
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-
-        try
-        {
-            bankService.addAccount(client1, account1);
-        }
-        catch (AccountNumberLimitException e)
-        {
-            System.out.println("Limit of accounts for one client (2) reached");
-        }
-
-        /*
-         * Information in catch clauses are just for test purposes
-         */
-        try
-        {
-            bankService.addClient(ubs, client1);
-        }
-        catch (ClientExistsException e)
-        {
-            System.out.println("Client with that name already exists");
-        }
-
-        client1.setInitialOverdraft(1000);
-        Account account2 = bankService.createAccount(client1, "Checking");
-        bankService.setActiveAccount(client1, account2);
-        try
-        {
-            bankService.deposit(client1, 100);
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-        try
-        {
-            bankService.withdraw(client1, 10500);
-        }
-        catch (OverDraftLimitExceededException e)
+        catch (ActiveAccountNotSet e)
         {
             System.out.println(e.getMessage());
+
+            jonny.setDefaultActiveAccountIfNotSet();
+            jonny.deposit(5_000);
         }
-        catch (NotEnoughFundsException e)
-        {
-            System.out.println("Not enough funds");
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-        try
-        {
-            bankService.addAccount(client1, account2);
-        }
-        catch (AccountNumberLimitException e)
-        {
-            System.out.println("Account number limit for one client (2) reached");
-        }
-        //ubs.printReport();
-        System.out.println(client1);
+
+        System.out.println(jonny);
+
+        Client adam = banking.getClient(CLIENT_NAMES[1]);
+        adam.setDefaultActiveAccountIfNotSet();
+
+        adam.withdraw(1500);
+
+        double balance = adam.getBalance();
+        System.out.println("\n" + adam.getName() + ", current balance: " + balance);
+
+        banking.transferMoney(jonny, adam, 1000);
+
+        System.out.println("\n=======================================");
+        banking.getClients().forEach(System.out::println);
     }
 
     /*
      * Method that creates a few clients and initializes them with sample values
      */
-    public static Banking initialize()
+    public static Banking initialize(Storage<Client> storage)
     {
         Banking banking = new BankingImpl();
-        banking.setStorage(new ClientStorage());
+        banking.setStorage(storage);
 
-        Client client = new Client("Jonny Bravo", 1000, Gender.MALE);
+        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
 
-        Account clientSaving = new SavingAccount(1000);
-        client.setActiveAccount(clientSaving);
-        try
-        {
-            client.withdraw(100);
-        }
-        catch (NotEnoughFundsException e)
-        {
-            System.out.println("Not enough funds");
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-        try
-        {
-            client.addAccount(clientSaving);
-        }
-        catch (AccountNumberLimitException e)
-        {
-            System.out.println("Account number limit for one client (2) reached");
-        }
+        Account savingAccount = new SavingAccount(1000);
+        client_1.addAccount(savingAccount);
 
-        adam = new Client("Adam Budzinski", 5000, Gender.MALE);
-        Account checking = adam.createAccount("Checking");
-        adam.setActiveAccount(checking);
-        try
-        {
-            adam.addAccount(checking);
-        }
-        catch (AccountNumberLimitException e)
-        {
-            System.out.println("Account number limit for one client (2) reached");
-        }
-        try
-        {
-            adam.deposit(500);
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
+        Account checkingAccount = new CheckingAccount(1000);
+        client_1.addAccount(checkingAccount);
 
-        try
-        {
-            bank.addClient(client);
-        }
-        catch (ClientExistsException e)
-        {
-            System.out.println("Client with that name already exists");
-        }
-        try
-        {
-            bank.addClient(adam);
-        }
-        catch (ClientExistsException e)
-        {
-            System.out.println("Client with that name already exists");
-        }
 
-    }
+        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
 
-    public static void modifyBank(Client c, float withdraw, float deposit)
-    {
-        try
-        {
-            c.deposit(deposit);
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
-        try
-        {
-            c.withdraw(withdraw);
-        }
-        catch (OverDraftLimitExceededException e)
-        {
-            System.out.println(e.getMessage());
-        }
-        catch (NotEnoughFundsException e)
-        {
-            System.out.println("Not enough funds");
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
-        }
+        Account checking = new CheckingAccount(1500);
+        client_2.addAccount(checking);
+
+        banking.addClient(client_1);
+        banking.addClient(client_2);
+
+
+        return banking;
     }
 }

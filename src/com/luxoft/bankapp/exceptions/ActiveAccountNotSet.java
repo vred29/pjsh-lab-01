@@ -1,7 +1,17 @@
 package com.luxoft.bankapp.exceptions;
 
-/**
- * Created by st11232 on 8/1/2017.
- */
-public class ActiveAccountNotSet extends RuntimeException {
+public class ActiveAccountNotSet extends RuntimeException
+{
+    private String clientName;
+
+    public ActiveAccountNotSet(String clientName)
+    {
+        this.clientName = clientName;
+    }
+
+    @Override
+    public String getMessage()
+    {
+        return "Active account not set for " + clientName;
+    }
 }

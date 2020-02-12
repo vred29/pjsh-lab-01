@@ -7,8 +7,10 @@ import java.util.Map;
 
 public abstract class AbstractAccount implements Account, Serializable
 {
+    @Feed
     private double balance;
 
+    @Feed
     final AccountType type;
 
     public AbstractAccount(AccountType type)
@@ -25,6 +27,7 @@ public abstract class AbstractAccount implements Account, Serializable
         }
 
         balance += amount;
+        System.out.println("Successful deposit to " + type + " account.");
     }
 
     @Override
@@ -64,7 +67,6 @@ public abstract class AbstractAccount implements Account, Serializable
     }
 
     @Override
-    @Feed("BALANCE")
     public double getBalance()
     {
         return balance;
@@ -78,15 +80,8 @@ public abstract class AbstractAccount implements Account, Serializable
     // TODO feed
     public void parseFeed(Map<String, String> map)
     {
-        try
-        {
-            String balance = map.get("balance");
-            this.balance = Double.parseDouble(balance != null ? balance : "");
-        }
-        catch (NumberFormatException ignore)
-        {
-
-        }
+        String balance = map.get("balance");
+        this.balance = Double.parseDouble(balance != null ? balance : "");
     }
 
 

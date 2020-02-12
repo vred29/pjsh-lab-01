@@ -7,78 +7,44 @@ import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 import com.luxoft.bankapp.service.feed.Feed;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class Client implements Serializable
+public class Client implements Identifiable, Serializable
 {
-    private long id;
+    private Long id;
 
     @Feed("NAME")
     private String name;
+
     @Feed("ACCOUNTS")
-    private Set<Account> accounts = new HashSet<>();
+    private Set<Account> accounts = new HashSet<>(2);
 
     private Account activeAccount;
-    private float initialOverdraft;
-    private float initialBalance;
+
+    @Feed("GENDER")
     private Gender gender;
+
     @Feed("CITY")
     private String city;
 
-    public enum Gender
-    {
-        MALE("Mr"), FEMALE("Ms"), UNDEFINED("");
-
-        private String prefix;
-
-        String getSalutation()
-        {
-            return prefix;
-        }
-
-        Gender(String prefix)
-        {
-            this.prefix = prefix;
-        }
-    }
-
-    @Feed("GENDER")
-    public String getGender()
-    {
-        switch (gender)
-        {
-            case MALE:
-                return "m";
-            case FEMALE:
-                return "f";
-            default:
-                return "u";
-        }
-    }
-
-    public Client(String name, float initialOverdraft, Gender gender)
-    {
-        this.name = name;
-        this.initialOverdraft = initialOverdraft;
-        this.gender = gender;
-    }
-
-    public Client(String name, float initialOverdraft)
-    {
-        this(name, initialOverdraft, Gender.UNDEFINED);
-    }
-
     public Client(String name)
     {
-        this(name, 0, Gender.UNDEFINED);
+        this(name, Gender.UNDEFINED);
     }
 
     public Client(String name, Gender gender)
     {
-        this(name, 0, gender);
+        this.name = name;
+        this.gender = gender;
     }
 
-    public synchronized float getBalance() throws ActiveAccountNotSet
+    public synchronized double getBalance() throws ActiveAccountNotSet
     {
         if (!checkIfActiveAccountSet())
         {
@@ -105,6 +71,14 @@ public class Client implements Serializable
         activeAccount.withdraw(x);
     }
 
+    public void removeAccount(AccountType type)
+    {
+        accounts = accounts.stream()
+                .filter(a -> a.getType() != type)
+                .collect(Collectors.toSet());
+    }
+
+
     public Set<Account> getAccounts()
     {
         return Collections.unmodifiableSet(accounts);
@@ -124,7 +98,7 @@ public class Client implements Serializable
     {
         for (Account account : accounts)
         {
-            if (account.getName().equals(type))
+            if (account.getType().equals(type))
             {
                 return account;
             }
@@ -144,52 +118,12 @@ public class Client implements Serializable
         }
     }
 
-    public Account createAccount(String accountType)
+    public void setDefaultActiveAccountIfNotSet()
     {
-        System.out.println("accountType: " + accountType);
-        if (accountType.toLowerCase().startsWith("s"))
+        if (activeAccount == null && accounts != null && !accounts.isEmpty())
         {
-            return new SavingAccount(initialBalance);
+            activeAccount = accounts.iterator().next();
         }
-        return new CheckingAccount(initialOverdraft);
-    }
-
-    public boolean checkIfActiveAccountSet()
-    {
-        return activeAccount != null;
-    }
-
-    public void setActiveAccountIfNotSet()
-    {
-        if (activeAccount != null || accounts == null || accounts.isEmpty())
-        {
-            return;
-        }
-        Iterator<Account> iterator = getAccounts().iterator();
-        if (iterator.hasNext())
-        {
-            Account next = iterator.next();
-            if (next != null)
-            {
-                activeAccount = next;
-                return;
-            }
-        }
-    }
-
-    private StringBuilder getSimpleInfoBuilder()
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append("\nClient: ")
-                .append(name)
-                .append("\nGender: ")
-                .append(getGender());
-        return builder;
-    }
-
-    public String getSimpleNameInfo()
-    {
-        return getSimpleInfoBuilder().toString();
     }
 
     public void parseFeed(Map<String, String> map)
@@ -205,78 +139,6 @@ public class Client implements Serializable
             account = created;
         }
         account.parseFeed(map);
-    }
-
-    public static Client.Gender parseGender(String string)
-    {
-        if (string == null)
-        {
-            return Client.Gender.UNDEFINED;
-        }
-        if (string.equalsIgnoreCase("m") || string.equalsIgnoreCase("male"))
-        {
-            return Client.Gender.MALE;
-        }
-        if (string.equalsIgnoreCase("f") || string.equalsIgnoreCase("female"))
-        {
-            return Client.Gender.FEMALE;
-        }
-        return Client.Gender.UNDEFINED;
-    }
-
-    public String getClientSalutation()
-    {
-        return gender.getSalutation();
-    }
-
-    public String getCity()
-    {
-        return city;
-    }
-
-    public void setCity(String city)
-    {
-        this.city = city;
-    }
-
-    public float getInitialBalance()
-    {
-        return initialBalance;
-    }
-
-    public void setInitialBalance(float initialBalance)
-    {
-        this.initialBalance = initialBalance;
-    }
-
-    public void setInitialOverdraft(float initialOverdraft)
-    {
-        this.initialOverdraft = initialOverdraft;
-    }
-
-    public float getInitialOverdraft()
-    {
-        return initialOverdraft;
-    }
-
-    public void setActiveAccount(Account activeAccount)
-    {
-        this.activeAccount = activeAccount;
-    }
-
-    public String getName()
-    {
-        return this.name;
-    }
-
-    public long getId()
-    {
-        return id;
-    }
-
-    public void setId(long id)
-    {
-        this.id = id;
     }
 
     @Override
@@ -312,12 +174,80 @@ public class Client implements Serializable
         builder.append("\nActive account: ");
         if (checkIfActiveAccountSet())
         {
-            builder.append(activeAccount.getName());
+            builder.append(activeAccount.getType());
         }
         else
         {
             builder.append("not set");
         }
         return builder.toString();
+    }
+
+    @Override
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Account getActiveAccount()
+    {
+        return activeAccount;
+    }
+
+    public void setActiveAccount(Account activeAccount)
+    {
+        this.activeAccount = activeAccount;
+    }
+
+    public Gender getGender()
+    {
+        return gender;
+    }
+
+    public void setGender(Gender gender)
+    {
+        this.gender = gender;
+    }
+
+    public String getCity()
+    {
+        return city;
+    }
+
+    public void setCity(String city)
+    {
+        this.city = city;
+    }
+
+    public enum Gender
+    {
+        MALE("Mr"), FEMALE("Ms"), UNDEFINED("");
+
+        private String prefix;
+
+        String getSalutation()
+        {
+            return prefix;
+        }
+
+        Gender(String prefix)
+        {
+            this.prefix = prefix;
+        }
     }
 }

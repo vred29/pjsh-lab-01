@@ -3,11 +3,11 @@ package com.luxoft.bankapp.service.feed;
 import com.luxoft.bankapp.commandInterface.BankCommander;
 import com.luxoft.bankapp.model.Account;
 import com.luxoft.bankapp.model.Client;
-
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,14 +17,11 @@ public class BankFeedServiceImpl implements BankFeedService
     @Override
     public void loadFeed(String folder)
     {
-        File f = new File(folder);
-        File[] files = f.listFiles(p -> p.getName().endsWith(".feed"));
+        File[] files = new File(folder).listFiles(p -> p.getName().endsWith(".feed"));
+
         if (files != null)
         {
-            for (File file : files)
-            {
-                loadFeed(file);
-            }
+            Arrays.stream(files).forEach(this::loadFeed);
         }
     }
 
@@ -48,17 +45,20 @@ public class BankFeedServiceImpl implements BankFeedService
     private Map<String, String> parseLine(String line)
     {
         Map<String, String> result = new HashMap<>();
+
         String[] properties = line.split(";");
+
         for (String property : properties)
         {
             String[] values = property.split("=");
             result.put(values[0], values[1]);
         }
+
         return result;
     }
 
     @Override
-    public void saveFeed(String file) throws IllegalAccessException, InvocationTargetException
+    public void saveFeed(String file)
     {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("feeds/" + file)))
         {
@@ -75,7 +75,7 @@ public class BankFeedServiceImpl implements BankFeedService
                 }
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }

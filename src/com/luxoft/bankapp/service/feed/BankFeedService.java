@@ -1,7 +1,6 @@
 package com.luxoft.bankapp.service.feed;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 public interface BankFeedService
 {
@@ -9,5 +8,5 @@ public interface BankFeedService
 
     void loadFeed(File file);
 
-    void saveFeed(String file) throws IllegalAccessException, InvocationTargetException;
+    void saveFeed(String file);
 }

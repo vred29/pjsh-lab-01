@@ -7,7 +7,7 @@ import java.util.Map;
 public class SavingAccount extends AbstractAccount
 {
 
-    public SavingAccount(float initialBalance)
+    public SavingAccount(double initialBalance)
     {
         super(AccountType.SAVING);
 

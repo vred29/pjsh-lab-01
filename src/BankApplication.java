@@ -1,20 +1,19 @@
 import com.luxoft.bankapp.exceptions.*;
 import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.Bank;
+import com.luxoft.bankapp.model.SavingAccount;
+import com.luxoft.bankapp.service.Banking;
+import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.model.Client.Gender;
-import com.luxoft.bankapp.service.BankServiceImpl;
+import com.luxoft.bankapp.service.storage.ClientStorage;
+import com.luxoft.bankapp.service.storage.MapStorage;
 
 public class BankApplication
 {
-    static Client client;
-    static Client adam;
-    static Bank bank = new Bank();
-
     public static void main(String[] args)
     {
+        Banking banking = initialize();
 
-        initialize(bank);
         modifyBank(client, 0, 500);
         modifyBank(adam, 20, 0);
         System.out.println(adam);
@@ -22,7 +21,7 @@ public class BankApplication
         // Initialization using BankService implementation
 
         BankServiceImpl bankService = new BankServiceImpl();
-        Bank ubs = new Bank();
+        BankingImpl ubs = new BankingImpl();
 
         Client client1 = new Client("Anna Smith", Gender.FEMALE);
         client1.setInitialBalance(1000);
@@ -116,10 +115,14 @@ public class BankApplication
     /*
      * Method that creates a few clients and initializes them with sample values
      */
-    public static void initialize(Bank bank)
+    public static Banking initialize()
     {
-        client = new Client("Jonny Bravo", 1000, Gender.MALE);
-        Account clientSaving = client.createAccount("Saving");
+        Banking banking = new BankingImpl();
+        banking.setStorage(new ClientStorage());
+
+        Client client = new Client("Jonny Bravo", 1000, Gender.MALE);
+
+        Account clientSaving = new SavingAccount(1000);
         client.setActiveAccount(clientSaving);
         try
         {

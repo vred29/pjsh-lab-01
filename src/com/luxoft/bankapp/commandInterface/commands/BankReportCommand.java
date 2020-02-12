@@ -2,7 +2,7 @@ package com.luxoft.bankapp.commandInterface.commands;
 
 import com.luxoft.bankapp.commandInterface.BankCommander;
 import com.luxoft.bankapp.service.BankReportService;
-import com.luxoft.bankapp.model.Bank;
+import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.BankReportServiceImpl;
 
@@ -18,7 +18,7 @@ public class BankReportCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        Bank bank = BankCommander.currentBank;
+        BankingImpl bank = BankCommander.currentBank;
         System.out.println("========== Bank " + bank.getName() + " report ====================");
         System.out.println("Number of clients: " + bankReportService.getNumberOfBankClients(bank));
         System.out.println("Number of accounts: " + bankReportService.getAccountsNumber(bank));

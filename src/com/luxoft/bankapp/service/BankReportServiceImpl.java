@@ -1,68 +1,62 @@
 package com.luxoft.bankapp.service;
 
-import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
 import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.Bank;
+import com.luxoft.bankapp.model.AccountType;
 import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.service.storage.Storage;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import java.util.*;
-
-public class BankReportServiceImpl implements BankReportService {
+public class BankReportServiceImpl implements BankReportService
+{
+    private Storage<Client> storage;
 
     @Override
-    public int getNumberOfBankClients(Bank bank) {
-        return bank.getClients().size();
+    public int getNumberOfBankClients()
+    {
+        return storage.getAll().size();
     }
 
     @Override
-    public int getAccountsNumber(Bank bank) {
-        int result = 0;
-        for (Client client : bank.getClients()) {
-            for (Account account : client.getAccounts()) {
-                result++;
-            }
-        }
-        return result;
+    public int getAccountsNumber()
+    {
+        return storage.getAll()
+                .stream()
+                .flatMap(c -> c.getAccounts().stream())
+                .collect(Collectors.toList()).size();
     }
 
     @Override
-    public List<Client> getClientsSorted(Bank bank) {
-        List<Client> clients = new ArrayList<>(bank.getClients());
-        clients.sort((o1, o2) -> {
-            try {
-                return (int) (o1.getBalance() - o2.getBalance());
-            } catch (ActiveAccountNotSet activeAccountNotSet) {
-                return 0;
-            }
-        });
-        return clients;
+    public List<Client> getClientsSorted()
+    {
+        return storage.getAll()
+                .stream()
+                .sorted(Comparator.comparing(Client::getName))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public float getBankCreditSum(Bank bank) {
-        float creditSum = 0;
-        for (Client client : bank.getClients()) {
-            creditSum += (float)client.getAccounts().stream()
-                    .filter(v -> v.getAccountName().equals("Checking Account"))
-                    .mapToDouble(Account::getBalance)
-                    .filter(v -> v<0)
-                    .sum();
-        }
-        return creditSum;
+    public double getBankCreditSum()
+    {
+        return storage.getAll().stream()
+                .flatMap(c -> c.getAccounts().stream())
+                .filter(a -> a.getType() == AccountType.CHECKING)
+                .mapToDouble(Account::getBalance)
+                .filter(b -> b < 0)
+                .sum();
     }
 
     @Override
-    public Map<String, List<Client>> getClientsByCity(Bank bank) {
-        Map<String, List<Client>> result = new HashMap<>();
+    public Map<String, List<Client>> getClientsByCity()
+    {
+        return storage.getAll().stream()
+                .collect(Collectors.groupingBy(Client::getCity));
+    }
 
-        for (Client client : bank.getClients()) {
-            String city = client.getCity();
-            if (!result.containsKey(city)) {
-                result.put(city, new ArrayList<>());
-            }
-            result.get(city).add(client);
-        }
-
-        return result;
+    public void setStorage(Storage<Client> storage)
+    {
+        this.storage = storage;
     }
 }

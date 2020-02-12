@@ -1,7 +1,7 @@
 package com.luxoft.bankapp.commandInterface;
 
 import com.luxoft.bankapp.commandInterface.commands.*;
-import com.luxoft.bankapp.model.Bank;
+import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.feed.BankFeedService;
 import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
@@ -12,7 +12,7 @@ import java.util.*;
 public class BankCommander {
     public static BankServiceImpl bankService = new BankServiceImpl();
     public static BankFeedService bankFeedService = new BankFeedServiceImpl();
-    public static Bank currentBank = new Bank("MyBank");
+    public static BankingImpl currentBank = new BankingImpl("MyBank");
     public static Client currentClient;
     public static Map<String, Command> commands = new TreeMap<>();
 

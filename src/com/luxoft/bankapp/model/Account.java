@@ -6,8 +6,6 @@ import java.util.Map;
 
 public interface Account
 {
-    long getId();
-
     AccountType getType();
 
     double getBalance();

@@ -7,7 +7,6 @@ import java.util.Map;
 
 public abstract class AbstractAccount implements Account, Serializable
 {
-    private long id;
     private double balance;
 
     final AccountType type;
@@ -75,18 +74,6 @@ public abstract class AbstractAccount implements Account, Serializable
     {
         this.balance = balance;
     }
-
-    @Override
-    public long getId()
-    {
-        return id;
-    }
-
-    public void setId(long id)
-    {
-        this.id = id;
-    }
-
 
     // TODO feed
     public void parseFeed(Map<String, String> map)

@@ -1,9 +1,13 @@
 package com.luxoft.bankapp.commandInterface.commands;
 
-public interface Command {
+public interface Command
+{
     void execute();
+
     String getCommandName();
-    default void printCommandInfo(){
+
+    default void printCommandInfo()
+    {
         System.out.println(this.getClass().getSimpleName());
     }
 }

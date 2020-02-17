@@ -123,6 +123,8 @@ public class Client implements Identifiable, Serializable
         if (activeAccount == null && accounts != null && !accounts.isEmpty())
         {
             activeAccount = accounts.iterator().next();
+            storage.update(this);
+
             System.out.println("Default account set for " + name);
         }
     }
@@ -250,6 +252,19 @@ public class Client implements Identifiable, Serializable
         Gender(String prefix)
         {
             this.prefix = prefix;
+        }
+
+        public static Gender parse(String s)
+        {
+            if ("m".equals(s))
+            {
+                return MALE;
+            }
+            else if ("f".equals(s))
+            {
+                return FEMALE;
+            }
+            return UNDEFINED;
         }
     }
 

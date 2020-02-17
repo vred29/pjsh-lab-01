@@ -1,18 +1,18 @@
 package com.luxoft.bankapp.commandInterface.commands;
 
-import com.luxoft.bankapp.commandInterface.BankCommander;
+public class GetClientsCommand extends AbstractCommand
+{
 
-public class GetClientsCommand extends AbstractCommand {
-
-    public GetClientsCommand(int num) {
+    public GetClientsCommand(int num)
+    {
         super(num);
     }
 
     @Override
-    public void execute() {
+    public void execute()
+    {
         System.out.println("Clients:");
-//        BankCommander.currentBank.getClients().forEach(v -> {
-//            System.out.println(v.getSimpleNameInfo());
-//        });
+
+        getBanking().getClients().forEach(System.out::println);
     }
 }

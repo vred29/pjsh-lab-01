@@ -1,5 +1,9 @@
-import com.luxoft.bankapp.exceptions.*;
-import com.luxoft.bankapp.model.*;
+import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
+import com.luxoft.bankapp.model.Account;
+import com.luxoft.bankapp.model.AccountType;
+import com.luxoft.bankapp.model.CheckingAccount;
+import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
 import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
@@ -9,11 +13,9 @@ import com.luxoft.bankapp.service.feed.BankFeedService;
 import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
 import com.luxoft.bankapp.service.storage.ClientStorage;
 import com.luxoft.bankapp.service.storage.Storage;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
 
 public class BankApplication
 {
@@ -25,13 +27,13 @@ public class BankApplication
         Storage<Client> storage = new ClientStorage();
         Banking banking = initialize(storage);
 
-//        workWithExistingClients(banking);
+        workWithExistingClients(banking);
 //
 //        bankingServiceDemo(banking);
 //
 //        bankReportsDemo(storage);
 
-        bankFeedDemo(banking);
+//        bankFeedDemo(banking);
     }
 
     private static void bankFeedDemo(Banking banking)

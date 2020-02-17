@@ -6,32 +6,34 @@ import java.util.Scanner;
 
 public class DepositCommand extends AbstractCommand
 {
-    private Client client;
-
-    public DepositCommand(int num, Client client)
+    public DepositCommand(int num)
     {
         super(num);
-        this.client = client;
     }
 
     @Override
     public void execute()
     {
-        System.out.println("How much do you want to deposit?");
+        System.out.println("Enter client name:");
+
         Scanner s = new Scanner(System.in);
+        String clientName = s.nextLine();
+
+        System.out.println("How much do you want to deposit?");
+
+        s = new Scanner(System.in);
         String amount = s.nextLine();
+
+        Client client;
 
         try
         {
+            client = getBanking().getClient(clientName);
             client.deposit(Double.parseDouble(amount));
         }
-        catch (NumberFormatException e)
+        catch (RuntimeException e)
         {
-            System.out.println("Illegal amount: " + amount);
-        }
-        catch (ActiveAccountNotSet activeAccountNotSet)
-        {
-            System.out.println("Active account not set");
+            System.out.println(e.getMessage());
         }
     }
 

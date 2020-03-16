@@ -2,7 +2,7 @@ package com.luxoft.bankapp.model;
 
 public interface Identifiable
 {
-    Long getId();
+    long getId();
 
     void setId(long id);
 }

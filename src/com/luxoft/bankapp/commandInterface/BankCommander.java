@@ -28,7 +28,7 @@ import java.util.TreeMap;
 
 public class BankCommander
 {
-    public Map<String, Command> commands = new TreeMap<>();
+    private Map<String, Command> commands = new TreeMap<>();
 
     private Banking banking;
     private Storage<Client> storage;

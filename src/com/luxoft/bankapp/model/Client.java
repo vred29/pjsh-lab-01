@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Client implements Identifiable, Serializable
 {
-    private Long id;
+    private long id;
 
     @Feed("NAME")
     private String name;
@@ -188,7 +188,7 @@ public class Client implements Identifiable, Serializable
     }
 
     @Override
-    public Long getId()
+    public long getId()
     {
         return id;
     }

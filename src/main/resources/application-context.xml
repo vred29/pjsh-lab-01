@@ -12,4 +12,8 @@
     <bean id="banking" class="com.luxoft.bankapp.service.BankingImpl"
           scope="singleton" autowire="byType" />
 
+    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl">
+        <property name="storage" ref="storage" />
+    </bean>
+
 </beans>

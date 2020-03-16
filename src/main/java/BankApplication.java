@@ -33,11 +33,11 @@ public class BankApplication
 
         Banking banking = initialize(context);
 
-        workWithExistingClients(banking);
+//        workWithExistingClients(banking);
 
-        bankingServiceDemo(banking);
+//        bankingServiceDemo(banking);
 
-//        bankReportsDemo(storage);
+        bankReportsDemo(context);
 
 //        bankFeedDemo(banking);
     }
@@ -82,12 +82,11 @@ public class BankApplication
         banking.getClients().forEach(System.out::println);
     }
 
-    private static void bankReportsDemo(Storage<Client> storage)
+    private static void bankReportsDemo(ApplicationContext context)
     {
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = new BankReportServiceImpl();
-        reportService.setStorage(storage);
+        BankReportService reportService = (BankReportService) context.getBean("bankReport");
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
 

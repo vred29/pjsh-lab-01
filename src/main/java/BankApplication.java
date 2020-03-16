@@ -34,9 +34,9 @@ public class BankApplication
         Banking banking = initialize(context);
 
         workWithExistingClients(banking);
-//
-//        bankingServiceDemo(banking);
-//
+
+        bankingServiceDemo(banking);
+
 //        bankReportsDemo(storage);
 
 //        bankFeedDemo(banking);

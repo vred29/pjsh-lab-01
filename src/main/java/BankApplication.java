@@ -37,23 +37,24 @@ public class BankApplication
 
 //        bankingServiceDemo(banking);
 
-        bankReportsDemo(context);
+//        bankReportsDemo(context);
 
-//        bankFeedDemo(banking);
+        bankFeedDemo(context);
     }
 
-    private static void bankFeedDemo(Banking banking)
+    private static void bankFeedDemo(ApplicationContext context)
     {
         System.out.println("\n=== Using BankFeedService ===\n");
 
         String fileName = "test.feed";
 
-        BankFeedService feedService = new BankFeedServiceImpl(banking);
+        BankFeedService feedService = (BankFeedService) context.getBean("feedService");
 
         feedService.saveFeed(fileName);
 
         System.out.println("Stored Clients");
         System.out.println("==============");
+
         try (BufferedReader reader = new BufferedReader(new FileReader("feeds/" + fileName)))
         {
             String line;
@@ -70,7 +71,7 @@ public class BankApplication
         System.out.println("\nLoading clients from file.");
         System.out.println("==========================");
 
-        banking = new BankingImpl();
+        Banking banking = new BankingImpl();
 
         Storage<Client> newStorage = new ClientStorage();
         banking.setStorage(newStorage);
@@ -81,6 +82,7 @@ public class BankApplication
 
         banking.getClients().forEach(System.out::println);
     }
+
 
     private static void bankReportsDemo(ApplicationContext context)
     {

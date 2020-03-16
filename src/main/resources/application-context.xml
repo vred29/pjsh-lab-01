@@ -16,4 +16,10 @@
         <property name="storage" ref="storage" />
     </bean>
 
+    <bean id="feedService" class="com.luxoft.bankapp.service.feed.BankFeedServiceImpl"
+          scope="prototype">
+
+        <constructor-arg name="banking" ref="banking" />
+    </bean>
+
 </beans>

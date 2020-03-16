@@ -45,18 +45,16 @@ public class BankingImpl implements Banking
     @Override
     public void removeClient(Client c)
     {
-        if (c.getId() != null)
-        {
-            storage.remove(c.getId());
-        }
+        storage.remove(c.getId());
     }
 
     @Override
     public Account createAccount(Client c, AccountType type)
     {
         Account account = null;
+        Client client = storage.get(c.getId());
 
-        if (c.getId() != null)
+        if (client != null)
         {
             account = new SavingAccount(0);
 
@@ -64,8 +62,6 @@ public class BankingImpl implements Banking
             {
                 account = new CheckingAccount(0);
             }
-
-            Client client = storage.get(c.getId());
 
             client.addAccount(account);
 
@@ -78,10 +74,10 @@ public class BankingImpl implements Banking
     @Override
     public void updateAccount(Client c, Account account)
     {
-        if (c.getId() != null)
-        {
-            Client toUpdate = storage.get(c.getId());
+        Client toUpdate = storage.get(c.getId());
 
+        if (toUpdate != null)
+        {
             toUpdate.removeAccount(account.getType());
             toUpdate.addAccount(account);
 
@@ -125,9 +121,10 @@ public class BankingImpl implements Banking
     @Override
     public void removeAccount(Client c, AccountType type)
     {
-        if (c.getId() != null)
+        Client toUpdate = storage.get(c.getId());
+
+        if (toUpdate != null)
         {
-            Client toUpdate = storage.get(c.getId());
             toUpdate.removeAccount(type);
             storage.update(toUpdate);
         }

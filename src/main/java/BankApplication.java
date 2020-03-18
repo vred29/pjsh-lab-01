@@ -29,7 +29,7 @@ public class BankApplication
     {
 
         ApplicationContext context =
-                new ClassPathXmlApplicationContext("application-context.xml");
+                new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
 
         Banking banking = initialize(context);
 

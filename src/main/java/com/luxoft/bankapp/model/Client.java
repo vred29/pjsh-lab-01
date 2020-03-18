@@ -88,6 +88,11 @@ public class Client implements Identifiable, Serializable
                 .collect(Collectors.toSet());
     }
 
+    public void setAccounts(Set<Account> accounts)
+    {
+        this.accounts.clear();
+        this.accounts.addAll(accounts);
+    }
 
     public Set<Account> getAccounts()
     {

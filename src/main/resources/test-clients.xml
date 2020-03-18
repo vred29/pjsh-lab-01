@@ -15,4 +15,20 @@
         <constructor-arg name="overdraft" value="1000" />
     </bean>
 
+    <bean id="client1" class="com.luxoft.bankapp.model.Client">
+        <constructor-arg name="name" value="${client1}" />
+        <constructor-arg name="gender" value="MALE" />
+
+        <property name="storage" ref="storage" />
+
+        <property name="city" value="Moscow" />
+
+        <property name="accounts">
+            <set>
+                <ref bean="savingAccount1"/>
+                <ref bean="checkingAccount1"/>
+            </set>
+        </property>
+    </bean>
+
 </beans>

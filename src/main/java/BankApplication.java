@@ -162,10 +162,7 @@ public class BankApplication
 
         Client client_1 = (Client) context.getBean("client1");
 
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
-
-        Account checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
+        Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
         banking.addClient(client_2);

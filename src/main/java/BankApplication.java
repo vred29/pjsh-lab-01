@@ -160,14 +160,7 @@ public class BankApplication
     {
         Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
-
-        Account savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
-
-        Account checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
-
+        Client client_1 = (Client) context.getBean("client1");
 
         Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
 

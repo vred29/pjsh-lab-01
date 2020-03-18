@@ -7,6 +7,10 @@
 
     <import resource="application-context.xml" />
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="clients.properties"/>
+    </bean>
+
     <bean id="savingAccount1" class="com.luxoft.bankapp.model.SavingAccount">
         <constructor-arg name="initialBalance" value="1000" />
     </bean>
@@ -16,7 +20,7 @@
     </bean>
 
     <bean id="client1" class="com.luxoft.bankapp.model.Client">
-        <constructor-arg name="name" value="Jonny Bravo" />
+        <constructor-arg name="name" value="${client1}" />
         <constructor-arg name="gender" value="MALE" />
 
         <property name="storage" ref="storage" />
@@ -36,7 +40,7 @@
     </bean>
 
     <bean id="client2" class="com.luxoft.bankapp.model.Client">
-        <constructor-arg name="name" value="Adam Budzinski" />
+        <constructor-arg name="name" value="${client2}" />
         <constructor-arg name="gender" value="MALE" />
 
         <property name="storage" ref="storage" />

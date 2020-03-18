@@ -7,4 +7,12 @@
 
     <import resource="application-context.xml" />
 
+    <bean id="savingAccount1" class="com.luxoft.bankapp.model.SavingAccount">
+        <constructor-arg name="initialBalance" value="1000" />
+    </bean>
+
+    <bean id="checkingAccount1" class="com.luxoft.bankapp.model.CheckingAccount">
+        <constructor-arg name="overdraft" value="1000" />
+    </bean>
+
 </beans>

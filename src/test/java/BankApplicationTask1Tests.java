@@ -36,7 +36,7 @@ public class BankApplicationTask1Tests
     {
         try
         {
-            BankApplication.class.getMethod("initialize").invoke(applicationContext);
+            BankApplication.class.getMethod("initialize", ApplicationContext.class).invoke(null, applicationContext);
         }
         catch (Exception e)
         {

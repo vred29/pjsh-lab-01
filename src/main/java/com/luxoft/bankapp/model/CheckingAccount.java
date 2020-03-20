@@ -27,6 +27,11 @@ public class CheckingAccount extends AbstractAccount
         overdraft = amount;
     }
 
+    public double getOverdraft()
+    {
+        return overdraft;
+    }
+
     @Override
     public void withdraw(double amount) throws OverDraftLimitExceededException
     {

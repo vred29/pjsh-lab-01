@@ -127,10 +127,17 @@ public class Client implements Identifiable, Serializable
     {
         if (activeAccount == null && accounts != null && !accounts.isEmpty())
         {
-            activeAccount = accounts.iterator().next();
+            Account account = getAccount(AccountType.CHECKING);
+
+            if (account == null)
+            {
+                account = accounts.iterator().next();
+            }
+
+            activeAccount = account;
             storage.update(this);
 
-            System.out.println("Default account set for " + name);
+            System.out.println("Default account set for " + name + ":" + activeAccount.getType());
         }
     }
 

@@ -27,22 +27,21 @@ public class BankApplication
 
     public static void main(String[] args)
     {
-
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
 
         Banking banking = initialize(context);
 
-//        workWithExistingClients(banking);
+        workWithExistingClients(banking);
 
-//        bankingServiceDemo(banking);
+        bankingServiceDemo(banking);
 
-//        bankReportsDemo(context);
+        bankReportsDemo(context);
 
         bankFeedDemo(context);
     }
 
-    private static void bankFeedDemo(ApplicationContext context)
+    public static void bankFeedDemo(ApplicationContext context)
     {
         System.out.println("\n=== Using BankFeedService ===\n");
 
@@ -83,8 +82,7 @@ public class BankApplication
         banking.getClients().forEach(System.out::println);
     }
 
-
-    private static void bankReportsDemo(ApplicationContext context)
+    public static void bankReportsDemo(ApplicationContext context)
     {
         System.out.println("\n=== Using BankReportService ===\n");
 
@@ -99,7 +97,7 @@ public class BankApplication
         System.out.println("Bank Credit Sum: " + reportService.getBankCreditSum());
     }
 
-    private static void bankingServiceDemo(Banking banking)
+    public static void bankingServiceDemo(Banking banking)
     {
         System.out.println("\n=== Initialization using Banking implementation ===\n");
 
@@ -119,7 +117,7 @@ public class BankApplication
         banking.getAllAccounts(anna).stream().forEach(System.out::println);
     }
 
-    private static void workWithExistingClients(Banking banking)
+    public static void workWithExistingClients(Banking banking)
     {
         System.out.println("\n=======================================");
         System.out.println("\n===== Work with existing clients ======");

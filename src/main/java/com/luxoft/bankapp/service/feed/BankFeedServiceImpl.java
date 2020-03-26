@@ -166,4 +166,9 @@ public class BankFeedServiceImpl implements BankFeedService
     {
         this.banking = banking;
     }
+
+    public Banking getBanking()
+    {
+        return banking;
+    }
 }

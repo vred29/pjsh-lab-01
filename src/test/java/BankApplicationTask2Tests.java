@@ -16,9 +16,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.lang.annotation.Annotation;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = "classpath:application-context.xml")
+@SpringJUnitConfig(locations = {"classpath:application-context.xml", "classpath:test-clients.xml"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BankApplicationTask2Tests
@@ -41,18 +43,7 @@ public class BankApplicationTask2Tests
     @BeforeEach
     public void init()
     {
-        try
-        {
-            BankApplication.class.getMethod("initialize", ApplicationContext.class).invoke(null, applicationContext);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            // ignore
-        }
-
-        // TODO you can replace code above with this when will have the method
-//        BankApplication.initialize(applicationContext);
+        BankApplication.initialize(applicationContext);
     }
 
     @Test
@@ -70,11 +61,48 @@ public class BankApplicationTask2Tests
     }
 
     @Test
+    public void bankingBeanAnnotation()
+    {
+        Annotation annotation = null;
+
+        try
+        {
+            annotation = BankingImpl.class.getDeclaredField("storage")
+                    .getAnnotation(Autowired.class);
+        }
+        catch (NoSuchFieldException e)
+        {
+            fail("BankingImpl should contains storage field");
+        }
+
+        assertNotNull(annotation, "storage field should contain annotation @Autowired");
+    }
+
+    @Test
     public void bankReportConfiguration()
     {
         assertNotNull(bankReport, "bankReport bean should be configured");
         assertTrue((bankReport instanceof BankReportServiceImpl), "bankReport should be instantiated with BankReportServiceImpl class");
     }
+
+    @Test
+    public void bankReportBeanAnnotation()
+    {
+        Annotation annotation = null;
+
+        try
+        {
+            annotation = BankReportServiceImpl.class.getDeclaredField("storage")
+                    .getAnnotation(Autowired.class);
+        }
+        catch (NoSuchFieldException e)
+        {
+            fail("BankingImpl should contains storage field");
+        }
+
+        assertNotNull(annotation, "storage field should contain annotation @Autowired");
+    }
+
 
 
     @Test

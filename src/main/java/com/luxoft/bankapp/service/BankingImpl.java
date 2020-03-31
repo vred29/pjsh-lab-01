@@ -5,6 +5,7 @@ import com.luxoft.bankapp.exceptions.ClientNotFoundException;
 import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 import com.luxoft.bankapp.model.*;
 import com.luxoft.bankapp.service.storage.Storage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 public class BankingImpl implements Banking
 {
+    @Autowired
     private Storage<Client> storage;
 
     @Override

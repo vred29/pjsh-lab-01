@@ -4,6 +4,8 @@ import com.luxoft.bankapp.model.Account;
 import com.luxoft.bankapp.model.AccountType;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.storage.Storage;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class BankReportServiceImpl implements BankReportService
 {
+    @Autowired
     private Storage<Client> storage;
 
     @Override

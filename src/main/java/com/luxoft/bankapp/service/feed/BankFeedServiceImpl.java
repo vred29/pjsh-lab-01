@@ -6,6 +6,7 @@ import com.luxoft.bankapp.model.AccountType;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.Banking;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -20,6 +21,7 @@ public class BankFeedServiceImpl implements BankFeedService
 {
     private Banking banking;
 
+    @Autowired
     public BankFeedServiceImpl(Banking banking)
     {
         this.banking = banking;

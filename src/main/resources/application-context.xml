@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
+    <context:annotation-config />
 
     <bean id="storage" class="com.luxoft.bankapp.service.storage.ClientStorage"
           scope="singleton" />
 
     <bean id="banking" class="com.luxoft.bankapp.service.BankingImpl"
-          scope="singleton" autowire="byType" />
+          scope="singleton" />
 
-    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl">
-        <property name="storage" ref="storage" />
-    </bean>
+    <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" />
 
     <bean id="feedService" class="com.luxoft.bankapp.service.feed.BankFeedServiceImpl"
-          scope="prototype">
-
-        <constructor-arg name="banking" ref="banking" />
-    </bean>
+          scope="prototype" />
 
 </beans>

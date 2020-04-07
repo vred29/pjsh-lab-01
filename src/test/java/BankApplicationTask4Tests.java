@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -18,7 +19,7 @@ import java.lang.annotation.Annotation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = { "classpath:application-context.xml", "classpath:test-clients.xml" })
+@SpringJUnitConfig(BankApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BankApplicationTask4Tests
@@ -28,6 +29,9 @@ public class BankApplicationTask4Tests
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private Banking banking;
@@ -55,9 +59,6 @@ public class BankApplicationTask4Tests
     @Qualifier("client2")
     private Client client2;
 
-    @Autowired
-    private PropertySourcesPlaceholderConfigurer placeholderConfigurer;
-
     @BeforeEach
     public void init()
     {
@@ -67,13 +68,8 @@ public class BankApplicationTask4Tests
     @Test
     public void placeholderConfigurerBeanConfiguration()
     {
-        assertNotNull(placeholderConfigurer, "placeholderConfigurer bean should be configured");
-
-        PropertySource<?> localProperties = placeholderConfigurer.getAppliedPropertySources().get("localProperties");
-        assertNotNull(localProperties, "You should configure PropertySourcesPlaceholderConfigurer bean");
-
-        assertEquals("Jonny Bravo", localProperties.getProperty("client1"));
-        assertEquals("Adam Budzinski", localProperties.getProperty("client2"));
+        assertEquals(CLIENT_NAMES[0], environment.getProperty("client1"));
+        assertEquals(CLIENT_NAMES[1], environment.getProperty("client2"));
     }
 
     @Test

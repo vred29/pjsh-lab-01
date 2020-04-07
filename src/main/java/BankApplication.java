@@ -1,9 +1,5 @@
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
-import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.AccountType;
-import com.luxoft.bankapp.model.CheckingAccount;
-import com.luxoft.bankapp.model.Client;
-import com.luxoft.bankapp.model.SavingAccount;
+import com.luxoft.bankapp.model.*;
 import com.luxoft.bankapp.service.BankReportService;
 import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
@@ -13,22 +9,33 @@ import com.luxoft.bankapp.service.feed.BankFeedService;
 import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
 import com.luxoft.bankapp.service.storage.ClientStorage;
 import com.luxoft.bankapp.service.storage.Storage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+@Configuration
+@PropertySource("classpath:clients.properties")
+@ComponentScan("com.luxoft.bankapp")
 public class BankApplication
 {
     private static final String[] CLIENT_NAMES =
             { "Jonny Bravo", "Adam Budzinski", "Anna Smith" };
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private Environment environment;
+
     public static void main(String[] args)
     {
         ApplicationContext context =
-                new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
+                new AnnotationConfigApplicationContext(BankApplication.class);
 
         Banking banking = initialize(context);
 
@@ -47,7 +54,7 @@ public class BankApplication
 
         String fileName = "test.feed";
 
-        BankFeedService feedService = (BankFeedService) context.getBean("feedService");
+        BankFeedService feedService = context.getBean(BankFeedServiceImpl.class);
 
         feedService.saveFeed(fileName);
 
@@ -86,7 +93,7 @@ public class BankApplication
     {
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = (BankReportService) context.getBean("bankReport");
+        BankReportService reportService = context.getBean(BankReportServiceImpl.class);
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
 
@@ -156,10 +163,9 @@ public class BankApplication
      */
     public static Banking initialize(ApplicationContext context)
     {
-        Banking banking = (Banking) context.getBean("banking");
+        Banking banking = context.getBean(BankingImpl.class);
 
         Client client_1 = (Client) context.getBean("client1");
-
         Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
@@ -168,4 +174,55 @@ public class BankApplication
 
         return banking;
     }
+
+    @Bean(name = "client1")
+    public Client getDemoClient1()
+    {
+        String name = environment.getProperty("client1");
+
+        Client client = new Client(name, Gender.MALE);
+        client.setCity("Moscow");
+
+        Account savingAccount = (SavingAccount) applicationContext.getBean("savingAccount1");
+        client.addAccount(savingAccount);
+
+        Account checkingAccount = (CheckingAccount) applicationContext.getBean("checkingAccount1");
+        client.addAccount(checkingAccount);
+
+        return client;
+    }
+
+    @Bean(name = "savingAccount1")
+    public SavingAccount getDemoSavingAccount1()
+    {
+        return new SavingAccount(1000);
+    }
+
+    @Bean(name = "checkingAccount1")
+    public CheckingAccount getDemoCheckingAccount1()
+    {
+        return new CheckingAccount(1000);
+    }
+
+    @Bean(name = "client2")
+    public Client getDemoClient2()
+    {
+        String name = environment.getProperty("client2");
+
+        Client client = new Client(name, Gender.MALE);
+        client.setCity("Kiev");
+
+        Account checking = (CheckingAccount) applicationContext.getBean("checkingAccount2");
+        client.addAccount(checking);
+
+        return client;
+    }
+
+    @Bean(name = "checkingAccount2")
+    public CheckingAccount getDemoCheckingAccount2()
+    {
+        return new CheckingAccount(1500);
+    }
+
+
 }

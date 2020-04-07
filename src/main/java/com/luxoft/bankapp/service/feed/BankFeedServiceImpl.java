@@ -7,6 +7,9 @@ import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.Banking;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -17,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BankFeedServiceImpl implements BankFeedService
 {
     private Banking banking;

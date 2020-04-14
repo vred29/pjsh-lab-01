@@ -1,3 +1,5 @@
+package com.luxoft.bankapp;
+
 import com.luxoft.bankapp.model.Account;
 import com.luxoft.bankapp.model.AccountType;
 import com.luxoft.bankapp.model.CheckingAccount;

@@ -1,7 +1,5 @@
-import com.luxoft.bankapp.model.Account;
-import com.luxoft.bankapp.model.AccountType;
-import com.luxoft.bankapp.model.CheckingAccount;
-import com.luxoft.bankapp.model.Client;
+package com.luxoft.bankapp;
+
 import com.luxoft.bankapp.service.BankReportService;
 import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;

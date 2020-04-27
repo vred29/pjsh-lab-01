@@ -132,7 +132,7 @@ public class BankApplicationTests
     }
 
     @Test
-    public void initializationServiceConfiguration1()
+    public void initializationServiceConfiguration()
     {
         assertNotNull(initializationService, "initializationService bean should be configured");
         assertTrue((initializationService instanceof DemoBankInitializationService),
@@ -140,32 +140,7 @@ public class BankApplicationTests
     }
 
     @Test
-    public void initializationServiceConfiguration2()
-    {
-        assertSame(banking, ((DemoBankInitializationService) initializationService).getBanking(),
-                "initializationService should use banking bean");
-    }
-
-    @Test
-    public void initializationServiceBeanAnnotation1()
-    {
-        Annotation annotation = null;
-
-        try
-        {
-            annotation = DemoBankInitializationService.class.getDeclaredField("banking")
-                    .getAnnotation(Autowired.class);
-        }
-        catch (NoSuchFieldException e)
-        {
-            fail("DemoBankInitializationService should contains banking field");
-        }
-
-        assertNotNull(annotation, "banking field should contain annotation @Autowired");
-    }
-
-    @Test
-    public void initializationServiceBeanAnnotation2()
+    public void initializationServiceBeanAnnotation()
     {
         Annotation annotation = null;
 

@@ -17,6 +17,8 @@ import com.luxoft.bankapp.service.storage.Storage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+
 import java.lang.annotation.Annotation;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -140,7 +142,26 @@ public class BankApplicationTests
     }
 
     @Test
-    public void initializationServiceBeanAnnotation()
+    public void initializationServiceBeanAnnotation1()
+    {
+        String value = null;
+
+        try
+        {
+            Annotation annotation = DemoBankInitializationService.class.getAnnotation(Profile.class);
+            value = ((Profile) annotation).value()[0];
+        }
+        catch (RuntimeException e)
+        {
+            fail("DemoBankInitializationService should contain Profile annotation");
+        }
+
+        assertEquals(value, "dev", "Profile annotation should contain value: dev");
+    }
+
+
+    @Test
+    public void initializationServiceBeanAnnotation2()
     {
         Annotation annotation = null;
 

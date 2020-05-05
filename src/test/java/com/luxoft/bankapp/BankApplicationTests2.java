@@ -14,17 +14,19 @@ import com.luxoft.bankapp.service.feed.BankFeedService;
 import com.luxoft.bankapp.service.feed.BankFeedServiceImpl;
 import com.luxoft.bankapp.service.storage.ClientStorage;
 import com.luxoft.bankapp.service.storage.Storage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = BankApplication.class)
-public class BankApplicationTests
+public class BankApplicationTests2
 {
     private static final String[] CLIENT_NAMES =
             { "Jonny Bravo", "Adam Budzinski", "Anna Smith" };
@@ -176,6 +178,58 @@ public class BankApplicationTests
         }
 
         assertNotNull(annotation, "feedService field should contain annotation @Autowired");
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation3()
+    {
+        try
+        {
+            DemoBankInitializationService.class.getDeclaredField("fileName");
+        }
+        catch (NoSuchFieldException e)
+        {
+            fail("DemoBankInitializationService should contains fileName field");
+        }
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation4()
+    {
+        Annotation annotation = null;
+
+        try
+        {
+            annotation = DemoBankInitializationService.class.getDeclaredField("fileName")
+                    .getAnnotation(Value.class);
+        }
+        catch (NoSuchFieldException e)
+        {
+            fail("DemoBankInitializationService should contains fileName field");
+        }
+
+        assertNotNull(annotation, "fileName field should contain annotation @Value");
+    }
+
+    @Test
+    public void initializationServiceBeanAnnotation5()
+    {
+        String actualFileName = null;
+
+        try
+        {
+            Field field = DemoBankInitializationService.class.getDeclaredField("fileName");
+            field.setAccessible(true);
+
+            actualFileName = (String) field.get(initializationService);
+        }
+        catch (Exception e)
+        {
+            fail("DemoBankInitializationService should contains fileName field");
+        }
+
+        assertEquals("demo.feed", actualFileName);
+
     }
 
     @Test

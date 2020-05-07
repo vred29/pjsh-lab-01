@@ -24,8 +24,6 @@ public class SavingAccount extends AbstractAccount
         {
             throw new NotEnoughFundsException(amount);
         }
-
-        System.out.println("Successful withdrawal from " + type + " account." );
     }
 
     // TODO feed

@@ -29,7 +29,6 @@ public abstract class AbstractAccount implements Account, Serializable
         }
 
         balance += amount;
-        System.out.println("Successful deposit to " + type + " account.");
     }
 
     @Override

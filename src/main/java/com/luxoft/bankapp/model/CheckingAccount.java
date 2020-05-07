@@ -42,8 +42,6 @@ public class CheckingAccount extends AbstractAccount
         }
 
         setBalance(getBalance() - amount);
-
-        System.out.println("Successful withdrawal from " + type + " account." );
     }
 
     // TODO feed

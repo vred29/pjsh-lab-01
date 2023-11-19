@@ -10,6 +10,8 @@ import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client.Gender;
 import com.luxoft.bankapp.service.storage.ClientRepository;
 import com.luxoft.bankapp.service.storage.MapClientRepository;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BankApplication {
 
@@ -17,23 +19,34 @@ public class BankApplication {
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
 
     public static void main(String[] args) {
+        ClassPathXmlApplicationContext context =
+                new ClassPathXmlApplicationContext(new String[]{"application-context.xml", "test-clients.xml"});
 
-        ClientRepository repository = new MapClientRepository();
-        Banking banking = initialize(repository);
+//      HEALTHCHECK
+//        SavingAccount savingAccount = (SavingAccount) context.getBean("savingAccount1");
+//        CheckingAccount checkingAccount = (CheckingAccount) context.getBean("checkingAccount1");
+//        Client client = (Client) context.getBean("client1");
+
+
+//        ClientRepository repository = new MapClientRepository();
+
+        Banking banking = initialize(context);
 
         workWithExistingClients(banking);
 
         bankingServiceDemo(banking);
 
-//        bankReportsDemo(repository);
+        bankReportsDemo(context);
     }
 
-    public static void bankReportsDemo(ClientRepository repository) {
+    public static void bankReportsDemo(ApplicationContext context) {
 
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = new BankReportServiceImpl();
-        reportService.setRepository(repository);
+//        BankReportService reportService = new BankReportServiceImpl();
+//        reportService.setRepository(repository);
+
+        BankReportService reportService = (BankReportService) context.getBean("bankReport");
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
 
@@ -100,23 +113,26 @@ public class BankApplication {
     /*
      * Method that creates a few clients and initializes them with sample values
      */
-    public static Banking initialize(ClientRepository repository) {
+    public static Banking initialize(ApplicationContext context) {
 
-        Banking banking = new BankingImpl();
-        banking.setRepository(repository);
+//        Banking banking = new BankingImpl();
+//        banking.setRepository(repository);
+        Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+//        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+//
+//        AbstractAccount savingAccount = new SavingAccount(1000);
+//        client_1.addAccount(savingAccount);
+//
+//        AbstractAccount checkingAccount = new CheckingAccount(1000);
+//        client_1.addAccount(checkingAccount);
+        Client client_1 = (Client) context.getBean("client1");
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
-
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
-
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
-
-        AbstractAccount checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
+//        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
+//
+//        AbstractAccount checking = new CheckingAccount(1500);
+//        client_2.addAccount(checking);
+        Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
         banking.addClient(client_2);

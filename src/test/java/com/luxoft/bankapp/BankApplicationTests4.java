@@ -5,7 +5,6 @@ import com.luxoft.bankapp.model.Account;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.service.Banking;
-import com.luxoft.bankapp.service.audit.Audit;
 import com.luxoft.bankapp.service.audit.AuditService;
 import com.luxoft.bankapp.service.operations.BankingOperationsService;
 import org.junit.jupiter.api.BeforeEach;

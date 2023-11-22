@@ -1,6 +1,10 @@
 
 spring.profiles.active: dev
 feed.filename: demo.feed
+audit.amount:
+#    daca schimbam valoarea de la deposit sau withdrawal cu >100 => testele vor pica deoarece filtreaza valori <100
+    deposit: 99
+    withdrawal: 99
 
 ---
 
